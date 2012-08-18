@@ -1,6 +1,6 @@
 // downloader.js
-var AMEBLO_START_YEAR = 2009;
-var AMEBLO_START_MONTH = 2;    //start with 1
+var AMEBLO_START_YEAR = 2011;
+var AMEBLO_START_MONTH = 8;    //start with 1
 var END_YEAR = (new Date()).getFullYear();
 var END_MONTH = (new Date()).getMonth() + 1;
 var AMEBLO_ACCOUNT = "__AMEBLO_ACCOUNT";
