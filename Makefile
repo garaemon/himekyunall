@@ -1,6 +1,6 @@
 all: ameblo
 
-ameblo: builds/downloader_ameblo_mayuri.js builds/downloader_ameblo_honoka.js builds/downloader_ameblo_mai.js builds/downloader_ameblo_sakurakoi.js builds/downloader_ameblo_yuria.js 
+ameblo: builds/downloader_ameblo_mayuri.js builds/downloader_ameblo_honoka.js builds/downloader_ameblo_mai.js builds/downloader_ameblo_sakurako.js builds/downloader_ameblo_yuria.js 
 
 builds/downloader_ameblo_mayuri.js: downloader_ameblo.js
 	mkdir -p builds
