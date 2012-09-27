@@ -44,7 +44,7 @@ function getTopImagePage(cb) {
     });
 };
 
-function getTopImagePage(target_link) {
+function getFileLoop(target_link) {
     $.ajax({
         url: target_link,
         error: function(e) {
@@ -62,7 +62,7 @@ function getTopImagePage(target_link) {
             // get the next link
             var next_atag = $(data).find("#selectImg").parent().next().find("a");
             if (next_atag && next_atag.length > 0) {
-                getTopImagePage(next_atag.href("href"));
+                getFileLoop(next_atag.href("href"));
             }
             else {
                 alert("done " + files_num);
