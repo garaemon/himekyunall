@@ -14,6 +14,12 @@ var AMEBLO_ACCOUNT = "yuria-kikuhara";
 //(function(){var s2=document.createElement("script");s2.charset="UTF-8";s2.src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js";document.body.appendChild(s2);})()
 
 var files_num = 0;
+
+function clearAllEntity() {
+  $("body").html("<ol></ol>");
+}
+
+
 function dispatchMouseEvents(opt) {
   var evt = document.createEvent('MouseEvents');
   evt.initMouseEvent(opt.type, opt.canBubble||true, opt.cancelable||true, opt.view||window, 
