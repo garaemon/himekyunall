@@ -51,7 +51,10 @@ function getFileLoop(target_link) {
     $.ajax({
         url: target_link,
         error: function(e) {
-            alert("somethign wrong with getting " + target_link);
+            alert("somethign wrong with getting " + target_link + ", ignore it");
+            console.log(e);
+            getFileLoop(target_link);
+            //alert("somethign wrong with getting " + target_link);
         },
         success: function(data) {
             var link = $(data).find("#centerImg").attr("src");
