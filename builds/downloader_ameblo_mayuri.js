@@ -1,9 +1,11 @@
+//(function(){var s2=document.createElement("script");s2.charset="UTF-8";s2.src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js";document.body.appendChild(s2);})()
 // downloader.js
 var AMEBLO_START_YEAR = 2011;
 var AMEBLO_START_MONTH = 12;    //start with 1
 var END_YEAR = (new Date()).getFullYear();
 var END_MONTH = (new Date()).getMonth() + 1;
 var AMEBLO_ACCOUNT = "mayuri-okumura";
+//var AMEBLO_ACCOUNT = "mayuri-okumura";
 
 // 1. first of all, get the imagelist page from month and year.
 // 2. access the top image page
@@ -32,8 +34,8 @@ function dispatchMouseEvents(opt) {
 function getTopImagePage(cb) {
     var now = new Date();
     $.ajax({
-        url: "http://ameblo.jp/" + AMEBLO_ACCOUNT + "/imagelist-" + noge.getFullYear()
-            + ("0" + now.getMonth()).slice(-2) + "-" + index + ".html",
+        url: "http://ameblo.jp/" + AMEBLO_ACCOUNT + "/imagelist-" + now.getFullYear()
+            + ("0" + (now.getMonth() + 1)).slice(-2) + "-1.html",
         error: function(e) {
             alert("something woring with getting top image list page");
         },
@@ -45,14 +47,14 @@ function getTopImagePage(cb) {
 };
 
 function getFileLoop(target_link) {
+    console.log(target_link);
     $.ajax({
         url: target_link,
         error: function(e) {
             alert("somethign wrong with getting " + target_link);
         },
         success: function(data) {
-            var link = $(data).find("#orgImg").attr("src");
-            var link = $(this).attr("src");
+            var link = $(data).find("#centerImg").attr("src");
             $("ol").append('<li><a href="' + link + '">' + link + "</a></li>");
             Array.prototype.slice.call(document.querySelectorAll(
                 'a[href$="' + link + '"]')).some(function(e) {
@@ -62,7 +64,7 @@ function getFileLoop(target_link) {
             // get the next link
             var next_atag = $(data).find("#selectImg").parent().next().find("a");
             if (next_atag && next_atag.length > 0) {
-                getFileLoop(next_atag.href("href"));
+                getFileLoop(next_atag.attr("href"));
             }
             else {
                 alert("done " + files_num);
