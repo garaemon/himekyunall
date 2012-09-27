@@ -44,7 +44,7 @@ function getTopImagePage(cb) {
     });
 };
 
-function getTopImagePage(taget_link) {
+function getTopImagePage(target_link) {
     $.ajax({
         url: target_link,
         error: function(e) {
