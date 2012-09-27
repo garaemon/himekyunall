@@ -47,12 +47,11 @@ function getTopImagePage(cb) {
 };
 
 function getFileLoop(target_link) {
-    console.log(target_link);
     $.ajax({
         url: target_link,
         error: function(e) {
-            alert("somethign wrong with getting " + target_link + ", ignore it");
-            console.log(e);
+            //alert("somethign wrong with getting " + target_link + ", ignore it");
+            console.log(JSON.stringify(e));
             getFileLoop(target_link);
             //alert("somethign wrong with getting " + target_link);
         },
