@@ -1,96 +1,19 @@
 // downloader.js
 var AMEBLO_START_YEAR = 2011;
-var AMEBLO_START_MONTH = 8;    //start with 1
+var AMEBLO_START_MONTH = 12;    //start with 1
 var END_YEAR = (new Date()).getFullYear();
 var END_MONTH = (new Date()).getMonth() + 1;
 var AMEBLO_ACCOUNT = "__AMEBLO_ACCOUNT";
 
-var all_files = [];
+// 1. first of all, get the imagelist page from month and year.
+// 2. access the top image page
+// 3. DL the image
+// 4. go to the next page from the html at 2.
+// 5. loop 3-4 til the end of the page
 
-Array.prototype.diff = function(a) {
-    return this.filter(function(i) {return !(a.indexOf(i) > -1);});
-};
+//(function(){var s2=document.createElement("script");s2.charset="UTF-8";s2.src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js";document.body.appendChild(s2);})()
 
-
-function nextYearMonth(year, month) {
-  if (year > END_YEAR && month > END_MONTH) {
-    return null;
-  }
-  else {
-    if (month == 12) {
-      return {
-        year: year + 1,
-        month: 1
-      };
-    }
-    else {
-      return {
-        year: year,
-        month: month + 1
-      };
-    }
-  }
-};
-
-function equalStringsArray(a, b) {
-  if (a && b && a.length == b.length) {
-    for (var i = 0; i < a.length; i++) {
-      var aa = a[i];
-      var bb = b[i];
-      if (aa.toString() != bb.toString())
-        return false;
-    }
-  }
-  else {
-    return false;
-  }
-  return true;
-};
-
-function clearAllEntity() {
-  $("body").html("<ol></ol>");
-}
-
-function getFilesLoop(year, month, index) {
-  $.ajax({
-    url: "http://ameblo.jp/" + AMEBLO_ACCOUNT + "/imagelist-" + year
-      + ("0" + month).slice(-2) + "-" + index + ".html",
-    error: function(e) {
-      var next = nextYearMonth(year, month);
-      if (next)
-        getFilesLoop(next.year, next.month, 1);
-      else {
-        alert("done");
-      }
-    },
-    success: function(data) {
-      var current_files = [];
-      $(data).find("ul#imageList li a").each(function(e) {
-        current_files.push($(this).attr("href"));
-      });
-      // calc diff
-      var diff = current_files.diff(all_files);
-      if (diff && diff.length > 0) {
-        for (var i = 0; i < diff.length; i++) {
-          all_files.push(diff[i]);
-        }
-        downloadFiles(diff);
-        getFilesLoop(year, month, index + 1);
-      }
-      else {
-        var next = nextYearMonth(year, month);
-        if (next)
-          getFilesLoop(next.year, next.month, 1);
-        else {
-          alert("done " + all_files.length + " images");
-          console.log(all_files.length);
-          console.log(all_files);
-        }
-      }
-    }
-  });
-};
-
+var files_num = 0;
 function dispatchMouseEvents(opt) {
   var evt = document.createEvent('MouseEvents');
   evt.initMouseEvent(opt.type, opt.canBubble||true, opt.cancelable||true, opt.view||window, 
@@ -100,38 +23,54 @@ function dispatchMouseEvents(opt) {
   opt.target.dispatchEvent(evt);
   return evt;
 }
-
-
-function downloadFiles(files) {
-  if (!files || files.length == 0) {
-    console.log("done");
-  }
-  else {
-    var target = files[0];
-    console.log("target:" + target);
+function getTopImagePage(cb) {
+    var now = new Date();
     $.ajax({
-      url: target,
-      error: function(e) {
-        alert("something is wrong with " + target);
-      },
-      success: function(data) {
-        $(data).find("div#mainImg a#imgLink img").each(function(x) {
-          var link = $(this).attr("src");
-          $("ol").append('<li><a href="' + link + '">' + link + "</a></li>");
-          Array.prototype.slice.call(document.querySelectorAll(
-            'a[href$="' + link + '"]')).some(function(e) {
-              dispatchMouseEvents({ type:'click', altKey:true, target:e, button:0 });
-            });
-        });
-      }
+        url: "http://ameblo.jp/" + AMEBLO_ACCOUNT + "/imagelist-" + noge.getFullYear()
+            + ("0" + now.getMonth()).slice(-2) + "-" + index + ".html",
+        error: function(e) {
+            alert("something woring with getting top image list page");
+        },
+        success: function(data) {
+            var link = $(data).find("#imageList li a").attr("href");
+            cb(link);
+        }
     });
-    downloadFiles(files.slice(1, files.length));
-  }
+};
+
+function getTopImagePage(taget_link) {
+    $.ajax({
+        url: target_link,
+        error: function(e) {
+            alert("somethign wrong with getting " + target_link);
+        },
+        success: function(data) {
+            var link = $(data).find("#orgImg").attr("src");
+            var link = $(this).attr("src");
+            $("ol").append('<li><a href="' + link + '">' + link + "</a></li>");
+            Array.prototype.slice.call(document.querySelectorAll(
+                'a[href$="' + link + '"]')).some(function(e) {
+                    dispatchMouseEvents({ type:'click', altKey:true, target:e, button:0 });
+                });
+            files_num = files_num + 1;
+            // get the next link
+            var next_atag = $(data).find("#selectImg").parent().next().find("a");
+            if (next_atag && next_atag.length > 0) {
+                getTopImagePage(next_atag.href("href"));
+            }
+            else {
+                alert("done " + files_num);
+            }
+        }
+    });
 };
 
 function main() {
-  clearAllEntity();
-  getFilesLoop(AMEBLO_START_YEAR, AMEBLO_START_MONTH, 1);
+    clearAllEntity();
+    getTopImagePage(function(toplink) {
+        getFileLoop(toplink);
+    });
+    //getFilesLoop(AMEBLO_START_YEAR, AMEBLO_START_MONTH, 1);
 };
 
 $(function() {
